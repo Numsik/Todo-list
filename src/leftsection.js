@@ -1,9 +1,14 @@
 function deletetask(){
-    const btndelete = document.querySelector('.deletbtn'); 
-    btndelete.addEventListener('click', () =>{
-        const div = document.querySelector('.project')
-        div.remove()
-    });
+    const btndelete = document.querySelectorAll('.deletbtn'); 
+    btndelete.forEach((btn) =>{
+        btn.addEventListener('click', () =>{
+            const div = btn.closest('.project');
+            if(div){
+                div.remove()
+            }
+            
+        })
+    })
 }
 export function projectadd(){
     const addproject = document.querySelector('.addproject');
@@ -19,8 +24,13 @@ export function projectadd(){
         createproject.appendChild(textdelete);
         text.textContent = "Nazev";
         text.classList.add('main-text');
-        textdelete.textContent = "delete";
+        textdelete.textContent = "Delete";
         textdelete.classList.add('deletbtn');
     });
+}
+export function editt(){
+    const getedit = document.querySelector('.edit').addEventListener('click', () =>{
+        console.log('zkuska')
+    })
 }
 export default deletetask;
