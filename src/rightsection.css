@@ -13,4 +13,11 @@
     height: 70px;
     background-color: #D9D9D9;
     border-radius: 5px;
+    justify-content: space-between;
+}
+
+.rightsecright, .leftsectionleft{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
