@@ -22,6 +22,9 @@ body{
     height: 1px;
     background-color: white;
 }
+.project-content{
+    margin-top: 50px;
+}
 .project{
     width: 100%;
     height: 50px;

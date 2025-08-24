@@ -1,1 +1,2 @@
-import './styles.css'
+import './leftsection.css'
+import './rightsection.css'
