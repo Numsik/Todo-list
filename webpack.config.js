@@ -2,6 +2,7 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const BundleAnalyzerPlugin =
   require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const CopyWebpackPlugin = require('copy-webpack-plugin')  // Přidejte tuto řádku
 
 module.exports = {
   mode: 'development',
@@ -58,5 +59,14 @@ module.exports = {
       template: 'src/template.html',
     }),
     new BundleAnalyzerPlugin(),
+    // Přidejte toto:
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, 'src/assets'),
+          to: path.resolve(__dirname, 'dist/assets')
+        }
+      ]
+    })
   ],
 }
