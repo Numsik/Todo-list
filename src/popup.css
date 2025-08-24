@@ -1,0 +1,12 @@
+.popupwindows{
+    position: fixed;
+    left: 50%;
+    top: 20%;
+    background-color: aqua;
+    width: 300px;
+    height: 300px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+
+}

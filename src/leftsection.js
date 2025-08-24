@@ -29,8 +29,46 @@ export function projectadd(){
     });
 }
 export function editt(){
-    const getedit = document.querySelector('.edit').addEventListener('click', () =>{
-        console.log('zkuska')
-    })
+    const getedit = document.querySelector('.edit');
+    
+    if (!getedit) {
+        console.error('Element s třídou .edit nebyl nalezen');
+        return;
+    }
+    
+    getedit.addEventListener('click', () => {
+        const popup = document.querySelector('.popupwindows');
+        
+        if (!popup) {
+            console.error('Element s třídou .popupwindows nebyl nalezen');
+            return;
+        }
+        
+        popup.style.display = 'flex';
+        
+        const btnchange = document.querySelector('.inputbtnsend');
+        
+        if (!btnchange) {
+            console.error('Element s třídou .inputbtnsend nebyl nalezen');
+            return;
+        }
+        btnchange.removeEventListener('click', handleButtonClick);
+        btnchange.addEventListener('click', handleButtonClick);
+    });
 }
+
+export function handleButtonClick() {
+    const textForChange = document.querySelector('.projekname-main');
+    const namechange = document.querySelector('.main-text1');
+    
+    if (!textForChange || !namechange) {
+        console.error('Jeden z požadovaných elementů nebyl nalezen');
+        return;
+    }
+    
+    namechange.value = textForChange.textContent;
+}
+
+
+
 export default deletetask;
