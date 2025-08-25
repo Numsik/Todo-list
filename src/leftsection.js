@@ -47,26 +47,23 @@ export function editt(){
         popup.style.display = 'flex';
         
         const btnchange = document.querySelector('.inputbtnsend');
-        
-        if (!btnchange) {
-            console.error('Element s třídou .inputbtnsend nebyl nalezen');
-            return;
-        }
+
         btnchange.removeEventListener('click', handleButtonClick);
         btnchange.addEventListener('click', handleButtonClick);
     });
 }
 
 export function handleButtonClick() {
-    const textForChange = document.querySelector('.projekname-main');
-    const namechange = document.querySelector('.main-text1');
+    const textForChange = document.querySelector('.main-text1');
+    const textrandomass = document.createElement('p');
+    const popup = document.querySelector('.popupwindows');
+    popup.appendChild(textrandomass);
+
     
-    if (!textForChange || !namechange) {
-        console.error('Jeden z požadovaných elementů nebyl nalezen');
-        return;
-    }
-    
-    namechange.value = textForChange.textContent;
+    const inputvalue = document.querySelector('.inputforchange');
+    const newvalue = inputvalue.value
+    console.log(newvalue)
+    textForChange.textContent = newvalue
 }
 
 
