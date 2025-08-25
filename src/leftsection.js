@@ -1,71 +1,90 @@
-function deletetask(){
-    const btndelete = document.querySelectorAll('.deletbtn'); 
-    btndelete.forEach((btn) =>{
-        btn.addEventListener('click', () =>{
-            const div = btn.closest('.project');
-            if(div){
-                div.remove()
-            }
-            
-        })
+export function addproject(){
+    const addbtn = document.querySelector('.addproject');
+    const projectcontent = document.querySelector('.project-content')
+
+    addbtn.addEventListener('click', () => {
+        const project = document.createElement('div')
+        project.classList.add('project')
+        projectcontent.appendChild(project)
+        project.innerHTML = `
+        <div class="maintextwithuprava">
+                <p class="main-text">Nazev</p>
+                <span class="edit"><img src="assets/Vector.png" ></span>     
+         </div>
+            <p class="deletbtn"> Delete</p>
+        `
     })
 }
-export function projectadd(){
-    const addproject = document.querySelector('.addproject');
-    const leftsection = document.querySelector('.left-section')
-    addproject.addEventListener('click', () =>{
-        
-        const createproject = document.createElement('div');
-        leftsection.appendChild(createproject);
-        createproject.classList.add('project');
-        const text = document.createElement('p');
-        const textdelete = document.createElement('p');
-        createproject.appendChild(text);
-        createproject.appendChild(textdelete);
-        text.textContent = "Nazev";
-        text.classList.add('main-text');
-        textdelete.textContent = "Delete";
-        textdelete.classList.add('deletbtn');
-    });
-}
-export function editt(){
-    const getedit = document.querySelector('.edit');
+
+
+export function deletetask(){
+    const projectcontent = document.querySelector('.project-content');
     
-    if (!getedit) {
-        console.error('Element s třídou .edit nebyl nalezen');
+    if (!projectcontent) {
+        console.error('.project-content nebyl nalezen');
         return;
     }
     
-    getedit.addEventListener('click', () => {
-        const popup = document.querySelector('.popupwindows');
-        
-        if (!popup) {
-            console.error('Element s třídou .popupwindows nebyl nalezen');
-            return;
+    projectcontent.addEventListener('click', (event) => {
+        if (event.target.classList.contains('deletbtn')) {
+            const div = event.target.closest('.project');
+            if (div) {
+                div.remove();
+            }
         }
-        
-        popup.style.display = 'flex';
-        
-        const btnchange = document.querySelector('.inputbtnsend');
-
-        btnchange.removeEventListener('click', handleButtonClick);
-        btnchange.addEventListener('click', handleButtonClick);
     });
 }
 
-export function handleButtonClick() {
-    const textForChange = document.querySelector('.main-text1');
-    const textrandomass = document.createElement('p');
-    const popup = document.querySelector('.popupwindows');
-    popup.appendChild(textrandomass);
-
+export function editt(){
+    const projectcontent = document.querySelector('.project-content');
     
-    const inputvalue = document.querySelector('.inputforchange');
-    const newvalue = inputvalue.value
-    console.log(newvalue)
-    textForChange.textContent = newvalue
+    if (!projectcontent) {
+        console.error('.project-content nebyl nalezen');
+        return;
+    }
+    
+
+    projectcontent.addEventListener('click', (event) => {
+    
+        const editElement = event.target.closest('.edit');
+        if (editElement) {
+            const popup = document.querySelector('.popupwindows');
+            
+            if (!popup) {
+                console.error('Element s třídou .popupwindows nebyl nalezen');
+                return;
+            }
+            
+            popup.style.display = 'flex';
+            
+            const btnchange = document.querySelector('.inputbtnsend');
+            
+        
+            const currentProject = editElement.closest('.project');
+            btnchange.dataset.currentProject = Array.from(projectcontent.children).indexOf(currentProject);
+            
+            btnchange.removeEventListener('click', handleButtonClick);
+            btnchange.addEventListener('click', handleButtonClick);
+        }
+    });
 }
 
+export function handleButtonClick(event) {
+    const popup = document.querySelector('.popupwindows');
+    const inputvalue = document.querySelector('.inputforchange');
+    const newvalue = inputvalue.value;
+    
+    const projectIndex = event.target.dataset.currentProject;
+    const projectcontent = document.querySelector('.project-content');
+    const currentProject = projectcontent.children[projectIndex];
+    const mainText = currentProject.querySelector('.main-text');
+    
+    if (mainText) {
+        mainText.textContent = newvalue;
+    }
+    
+    console.log(`Změněn projekt ${projectIndex}: ${newvalue}`);
 
-
-export default deletetask;
+    popup.style.display = 'none';
+    inputvalue.value = '';
+}
