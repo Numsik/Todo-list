@@ -5,9 +5,12 @@ import { editt } from './leftsection.js'
 import './popup.css'
 import { handleButtonClick } from './leftsection.js'
 import { addproject } from './leftsection.js'
+import { closeedit } from './leftsection.js'
 
 document.addEventListener('DOMContentLoaded', () => {
     deletetask();
     editt();
     addproject();
+    closeedit();
+
 });

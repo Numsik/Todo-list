@@ -1,3 +1,33 @@
+const todolist = {
+  Projects: [
+    {
+      projectName: "Škola",
+      todos: [
+        {
+          name: "Dopsat seminárku",
+          ddmmyyyy: "25082025",
+          isDone: false
+        },
+        {
+          name: "Naučit se na test",
+          ddmmyyyy: "26082025",
+          isDone: true
+        }
+      ]
+    },
+
+    {
+      projectName: "Práce",
+      todos: [
+        {
+          name: "Dokončit prezentaci",
+          ddmmyyyy: "27082025",
+          isDone: false
+        }
+      ]
+    }
+  ]
+}
 export function addproject(){
     const addbtn = document.querySelector('.addproject');
     const projectcontent = document.querySelector('.project-content')
@@ -15,6 +45,7 @@ export function addproject(){
         `
     })
 }
+
 
 
 export function deletetask(){
@@ -37,23 +68,12 @@ export function deletetask(){
 
 export function editt(){
     const projectcontent = document.querySelector('.project-content');
-    
-    if (!projectcontent) {
-        console.error('.project-content nebyl nalezen');
-        return;
-    }
-    
 
     projectcontent.addEventListener('click', (event) => {
     
         const editElement = event.target.closest('.edit');
         if (editElement) {
             const popup = document.querySelector('.popupwindows');
-            
-            if (!popup) {
-                console.error('Element s třídou .popupwindows nebyl nalezen');
-                return;
-            }
             
             popup.style.display = 'flex';
             
@@ -71,20 +91,30 @@ export function editt(){
 
 export function handleButtonClick(event) {
     const popup = document.querySelector('.popupwindows');
+
     const inputvalue = document.querySelector('.inputforchange');
+
     const newvalue = inputvalue.value;
     
     const projectIndex = event.target.dataset.currentProject;
     const projectcontent = document.querySelector('.project-content');
+    
     const currentProject = projectcontent.children[projectIndex];
     const mainText = currentProject.querySelector('.main-text');
     
     if (mainText) {
         mainText.textContent = newvalue;
     }
-    
-    console.log(`Změněn projekt ${projectIndex}: ${newvalue}`);
 
     popup.style.display = 'none';
     inputvalue.value = '';
 }
+export function closeedit(){
+    const getX = document.querySelector('.x');
+    getX.addEventListener('click', () =>{
+        const popup = document.querySelector('.popupwindows');
+        popup.style.display = 'none'
+    });
+}
+
+
