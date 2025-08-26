@@ -33,6 +33,13 @@ export function addproject(){
     const projectcontent = document.querySelector('.project-content')
 
     addbtn.addEventListener('click', () => {
+
+      const newprojekt = {
+        projectName: "NameProjekt",
+        todos: []
+      };
+      todolist.Projects.push(newprojekt);
+
         const project = document.createElement('div')
         project.classList.add('project')
         projectcontent.appendChild(project)
@@ -51,10 +58,7 @@ export function addproject(){
 export function deletetask(){
     const projectcontent = document.querySelector('.project-content');
     
-    if (!projectcontent) {
-        console.error('.project-content nebyl nalezen');
-        return;
-    }
+
     
     projectcontent.addEventListener('click', (event) => {
         if (event.target.classList.contains('deletbtn')) {
