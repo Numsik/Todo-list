@@ -5,7 +5,6 @@ export function addtaskright(){
     addtaskbtn.addEventListener('click', () =>{
         const project = document.createElement('div');
         project.classList.add('tasks');
-        console.log('tohlejde')
         projectright.appendChild(project)
         project.innerHTML = ` 
         <div class="todoitem">
@@ -43,4 +42,21 @@ export function deletetaskright(){
             } 
         }
     });      
+}
+export function addtodo(){   
+    const todolist = document.querySelector('.right-section');
+    
+    todolist.addEventListener('click', (event) => {
+        if (event.target.closest('.editright')) {
+            const changestyle = document.querySelector('.popwindowinterdimiate');
+            changestyle.style.display = "flex";
+        }
+    });
+}
+export function close(){
+  const closebtn = document.querySelector('.xright');
+  closebtn.addEventListener('click', () =>{
+    const changestyle = document.querySelector('.popwindowinterdimiate');
+    changestyle.style.display = "none";
+  });
 }

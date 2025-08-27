@@ -1,14 +1,10 @@
-import './leftsection.css'
-import './rightsection.css'
-import { deletetask } from './leftsection.js'  
-import { editt } from './leftsection.js'
-import './popup.css'
-import './popupright.css'
-import { handleButtonClick } from './leftsection.js'
-import { addproject } from './leftsection.js'
-import { closeedit } from './leftsection.js'
-import { deletetaskright } from './rightsection.js'
-import { addtaskright } from './rightsection.js'
+import './leftsection.css';
+import './rightsection.css';
+import './popup.css';
+import './popupright.css';
+import { closeedit, addproject, handleButtonClick, editt, deletetask } from './leftsection.js';
+import { addtodo, close,  addtaskright, deletetaskright} from './rightsection.js';
+
 
 document.addEventListener('DOMContentLoaded', () => {
     deletetask();
@@ -17,5 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     closeedit();
     deletetaskright();   
     addtaskright(); 
-
+    addtodo();
+    close();
 });

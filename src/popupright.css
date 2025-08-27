@@ -5,7 +5,7 @@
     background-color: #a5a5a5;
     left: 50%;
     top: 30%;
-    display: flex;
+    display: none;
     flex-direction: column;
     gap: 10px;
     align-items: center;
@@ -33,10 +33,23 @@
     font-size: large;
     border-radius: 5px;
 }
+.editright{
+    cursor: pointer;
+}
 .name-of-task{
     height: 50px;
     width: 200px;
     border: none;
     border-radius: 10px;
     margin-bottom: 15px;
+}
+.xright{
+    position: absolute;
+    top: -3%;
+    left: 5%;
+    cursor: pointer;
+    font-size: 14px;
+}
+.deleteright{
+    cursor: pointer;
 }
