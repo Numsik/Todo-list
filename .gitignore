@@ -1,2 +1,478 @@
 node_modules
 dist
+
+import { todolist } from "./todolist.js";
+
+// Aktuální aktivní projekt
+let currentProjectIndex = -1;
+
+export function addproject(){
+    const addbtn = document.querySelector('.addproject');
+    const projectcontent = document.querySelector('.project-content');
+    
+    addbtn.addEventListener('click', () => {
+        // Vytvoř nový projekt v datech
+        const newprojekt = {
+            projectName: "Nový projekt",
+            todos: []
+        };
+        
+        // Přidej do datové struktury
+        const projectIndex = todolist.Projects.push(newprojekt) - 1;
+        
+        // Vytvoř DOM element
+        const project = document.createElement('div');
+        project.classList.add('project');
+        project.dataset.projectIndex = projectIndex; // Ulož index pro propojení
+        
+        projectcontent.appendChild(project);
+        project.innerHTML = `
+            <div class="maintextwithuprava">
+                <p class="main-text">${newprojekt.projectName}</p>
+                <span class="edit"><img src="assets/Vector.png"></span>
+            </div>
+            <p class="opentodo">Open</p>
+            <p class="deletbtn">Delete</p>
+        `;
+    });
+}
+
+export function opentodolist(){
+    const projectcontent = document.querySelector('.project-content');
+    
+    projectcontent.addEventListener('click', (event) => {
+        if (event.target.classList.contains('opentodo')) {
+            const projectDiv = event.target.closest('.project');
+            const projectIndex = parseInt(projectDiv.dataset.projectIndex);
+            
+            // Nastav aktuální projekt
+            currentProjectIndex = projectIndex;
+            
+            // Aktualizuj název projektu v pravé sekci
+            const projektNameMain = document.querySelector('.projekname-main');
+            projektNameMain.textContent = todolist.Projects[projectIndex].projectName;
+            
+            // Vymaž aktuální úkoly a načti úkoly tohoto projektu
+            loadProjectTodos(projectIndex);
+        }
+    });
+}
+
+function loadProjectTodos(projectIndex) {
+    const tasksContainer = document.querySelector('.tasks');
+    
+    // Vymaž všechny existující úkoly kromě tlačítka
+    const todoItems = tasksContainer.querySelectorAll('.todoitem');
+    todoItems.forEach(item => item.remove());
+    
+    // Načti úkoly z datové struktury
+    const project = todolist.Projects[projectIndex];
+    project.todos.forEach((todo, todoIndex) => {
+        createTodoElement(todo, todoIndex);
+    });
+}
+
+function createTodoElement(todo, todoIndex) {
+    const tasksContainer = document.querySelector('.tasks');
+    const todoDiv = document.createElement('div');
+    
+    todoDiv.classList.add('todoitem');
+    todoDiv.dataset.todoIndex = todoIndex;
+    
+    todoDiv.innerHTML = `
+        <div class="leftsectionleft">
+            <input type="checkbox" class="hotovo" ${todo.completed ? 'checked' : ''}>
+            <p class="nametask" style="${todo.completed ? 'text-decoration: line-through;' : ''}">${todo.name}</p>
+        </div>
+        <div class="rightsecright">
+            <p class="podnadpisright">${todo.dueDate || 'Bez termínu'}</p>
+            <span class="editright">
+                <img src="assets/Vector.png">
+            </span>
+            <span class="deleteright">
+                <img src="assets/delete.png">
+            </span>
+        </div>
+    `;
+    
+    tasksContainer.appendChild(todoDiv);
+}
+
+export function deletetask(){
+    const projectcontent = document.querySelector('.project-content');
+    
+    projectcontent.addEventListener('click', (event) => {
+        if (event.target.classList.contains('deletbtn')) {
+            const projectDiv = event.target.closest('.project');
+            const projectIndex = parseInt(projectDiv.dataset.projectIndex);
+            
+            if (projectDiv) {
+                // Odstraň z datové struktury
+                todolist.Projects.splice(projectIndex, 1);
+                
+                // Odstraň z DOM
+                projectDiv.remove();
+                
+                // Pokud byl smazán aktuální projekt, vymaž pravou sekci
+                if (currentProjectIndex === projectIndex) {
+                    clearRightSection();
+                    currentProjectIndex = -1;
+                }
+                
+                // Aktualizuj indexy ostatních projektů
+                updateProjectIndices();
+            }
+        }
+    });
+}
+
+function updateProjectIndices() {
+    const projects = document.querySelectorAll('.project');
+    projects.forEach((project, index) => {
+        if (project.dataset.projectIndex !== undefined) {
+            project.dataset.projectIndex = index;
+        }
+    });
+}
+
+function clearRightSection() {
+    const projektNameMain = document.querySelector('.projekname-main');
+    projektNameMain.textContent = 'Vyberte projekt';
+    
+    const tasksContainer = document.querySelector('.tasks');
+    const todoItems = tasksContainer.querySelectorAll('.todoitem');
+    todoItems.forEach(item => item.remove());
+}
+
+export function editt(){
+    const projectcontent = document.querySelector('.project-content');
+    
+    projectcontent.addEventListener('click', (event) => {
+        const editElement = event.target.closest('.edit');
+        if (editElement) {
+            const popup = document.querySelector('.popupwindows');
+            popup.style.display = 'flex';
+            
+            const btnchange = document.querySelector('.inputbtnsend');
+            const currentProject = editElement.closest('.project');
+            const projectIndex = parseInt(currentProject.dataset.projectIndex);
+            
+            btnchange.dataset.currentProject = projectIndex;
+            
+            // Nastav aktuální hodnotu do inputu
+            const inputvalue = document.querySelector('.inputforchange');
+            inputvalue.value = todolist.Projects[projectIndex].projectName;
+            
+            btnchange.removeEventListener('click', handleButtonClick);
+            btnchange.addEventListener('click', handleButtonClick);
+        }
+    });
+}
+
+export function handleButtonClick(event) {
+    const popup = document.querySelector('.popupwindows');
+    const inputvalue = document.querySelector('.inputforchange');
+    const newvalue = inputvalue.value.trim();
+    
+    const projectIndex = parseInt(event.target.dataset.currentProject);
+    
+    if (newvalue && todolist.Projects[projectIndex]) {
+        // Aktualizuj v datové struktuře
+        todolist.Projects[projectIndex].projectName = newvalue;
+        
+        // Aktualizuj v DOM
+        const projectcontent = document.querySelector('.project-content');
+        const currentProject = projectcontent.querySelector(`[data-project-index="${projectIndex}"]`);
+        const mainText = currentProject.querySelector('.main-text');
+        
+        if (mainText) {
+            mainText.textContent = newvalue;
+        }
+        
+        // Pokud je to aktuální projekt, aktualizuj i pravou sekci
+        if (currentProjectIndex === projectIndex) {
+            const projektNameMain = document.querySelector('.projekname-main');
+            projektNameMain.textContent = newvalue;
+        }
+    }
+    
+    popup.style.display = 'none';
+    inputvalue.value = '';
+}
+
+export function closeedit(){
+    const getX = document.querySelector('.x');
+    getX.addEventListener('click', () => {
+        const popup = document.querySelector('.popupwindows');
+        popup.style.display = 'none';
+        
+        const inputvalue = document.querySelector('.inputforchange');
+        inputvalue.value = '';
+    });
+}
+
+// Export pro použití v jiných modulech
+export function getCurrentProjectIndex() {
+    return currentProjectIndex;
+}
+
+import { todolist } from "./todolist.js";
+import { getCurrentProjectIndex } from "./project-manager.js"; // Importuj funkci
+
+let currentEditingTask = null;
+
+export function addtaskright(){
+    const addtaskbtn = document.querySelector('.addtask');
+    const tasksContainer = document.querySelector('.tasks');
+    
+    addtaskbtn.addEventListener('click', () => {
+        const currentProjectIndex = getCurrentProjectIndex();
+        
+        // Zkontroluj, zda je vybrán projekt
+        if (currentProjectIndex === -1) {
+            alert('Nejprve vyberte projekt!');
+            return;
+        }
+        
+        // Vytvoř nový úkol v datové struktuře
+        const newTodo = {
+            name: "Nový úkol",
+            dueDate: "",
+            completed: false
+        };
+        
+        // Přidej do projektu
+        const todoIndex = todolist.Projects[currentProjectIndex].todos.push(newTodo) - 1;
+        
+        // Vytvoř DOM element
+        const todoDiv = document.createElement('div');
+        todoDiv.classList.add('todoitem');
+        todoDiv.dataset.todoIndex = todoIndex;
+        
+        tasksContainer.appendChild(todoDiv);
+        todoDiv.innerHTML = `
+            <div class="leftsectionleft">
+                <input type="checkbox" class="hotovo">
+                <p class="nametask">${newTodo.name}</p>
+            </div>
+            <div class="rightsecright">
+                <p class="podnadpisright">Bez termínu</p>
+                <span class="editright">
+                    <img src="assets/Vector.png">
+                </span>
+                <span class="deleteright">
+                    <img src="assets/delete.png">
+                </span>
+            </div>
+        `;
+    });
+}
+
+export function deletetaskright(){
+    const todolist = document.querySelector('.right-section');
+    
+    todolist.addEventListener('click', (event) => {
+        if (event.target.closest('.deleteright')){
+            const todoItem = event.target.closest('.todoitem');
+            const todoIndex = parseInt(todoItem.dataset.todoIndex);
+            const currentProjectIndex = getCurrentProjectIndex();
+            
+            if (todoItem && currentProjectIndex !== -1){
+                // Odstraň z datové struktury
+                todolist.Projects[currentProjectIndex].todos.splice(todoIndex, 1);
+                
+                // Odstraň z DOM
+                todoItem.remove();
+                
+                // Aktualizuj indexy ostatních úkolů
+                updateTodoIndices();
+            }
+        }
+    });
+}
+
+function updateTodoIndices() {
+    const todoItems = document.querySelectorAll('.todoitem');
+    todoItems.forEach((item, index) => {
+        item.dataset.todoIndex = index;
+    });
+}
+
+export function addtodo(){
+    const todolist = document.querySelector('.right-section');
+    
+    todolist.addEventListener('click', (event) => {
+        if (event.target.closest('.editright')) {
+            currentEditingTask = event.target.closest('.todoitem');
+            const currentProjectIndex = getCurrentProjectIndex();
+            const todoIndex = parseInt(currentEditingTask.dataset.todoIndex);
+            
+            if (currentProjectIndex !== -1 && todolist.Projects[currentProjectIndex].todos[todoIndex]) {
+                const todo = todolist.Projects[currentProjectIndex].todos[todoIndex];
+                
+                // Nastav aktuální hodnoty do inputů
+                const nameInput = document.querySelector('.name-of-task');
+                const dateInput = document.querySelector('#datum');
+                
+                nameInput.value = todo.name;
+                dateInput.value = todo.dueDate || '';
+                
+                const changestyle = document.querySelector('.popwindowinterdimiate');
+                changestyle.style.display = "flex";
+            }
+        }
+    });
+}
+
+export function close(){
+    const closebtn = document.querySelector('.xright');
+    closebtn.addEventListener('click', () => {
+        const changestyle = document.querySelector('.popwindowinterdimiate');
+        changestyle.style.display = "none";
+        
+        // Vymaž inputy
+        const nameInput = document.querySelector('.name-of-task');
+        const dateInput = document.querySelector('#datum');
+        nameInput.value = '';
+        dateInput.value = '';
+        
+        currentEditingTask = null;
+    });
+}
+
+export function ischecked() {
+    const todolist = document.querySelector('.right-section');
+    
+    todolist.addEventListener('change', (event) => {
+        if (event.target.classList.contains('hotovo')) {
+            const checkbox = event.target;
+            const todoitem = checkbox.closest('.todoitem');
+            const nameoftask = todoitem.querySelector('.nametask');
+            const todoIndex = parseInt(todoitem.dataset.todoIndex);
+            const currentProjectIndex = getCurrentProjectIndex();
+            
+            if (currentProjectIndex !== -1) {
+                // Aktualizuj v datové struktuře
+                todolist.Projects[currentProjectIndex].todos[todoIndex].completed = checkbox.checked;
+                
+                // Aktualizuj vizuální styl
+                if (checkbox.checked) {
+                    nameoftask.style.textDecoration = "line-through";
+                    todoitem.style.backgroundColor = "#f0f0f0ff";
+                } else {
+                    nameoftask.style.textDecoration = "none";
+                    todoitem.style.backgroundColor = "#D9D9D9";
+                }
+            }
+        }
+    });
+}
+
+export function taskchange(){
+    const sendbtn = document.querySelector('.rightsend');
+    
+    sendbtn.addEventListener('click', () => {
+        if (!currentEditingTask) return;
+        
+        const currentProjectIndex = getCurrentProjectIndex();
+        const todoIndex = parseInt(currentEditingTask.dataset.todoIndex);
+        
+        if (currentProjectIndex === -1) return;
+        
+        const datum = document.querySelector('#datum');
+        const nameoftask = document.querySelector('.name-of-task');
+        
+        const newdate = datum.value;
+        const newname = nameoftask.value.trim();
+        
+        if (newname || newdate) {
+            const todo = todolist.Projects[currentProjectIndex].todos[todoIndex];
+            
+            // Aktualizuj datovou strukturu
+            if (newname) todo.name = newname;
+            if (newdate) todo.dueDate = newdate;
+            
+            // Aktualizuj DOM
+            const nazevtasku = currentEditingTask.querySelector('.nametask');
+            const wheredate = currentEditingTask.querySelector('.podnadpisright');
+            
+            if (newname) nazevtasku.textContent = newname;
+            if (newdate) {
+                wheredate.textContent = newdate;
+            } else if (newname && !newdate) {
+                // Pokud se změnil jen název, zachovej původní datum
+                wheredate.textContent = todo.dueDate || 'Bez termínu';
+            }
+        }
+        
+        // Zavři popup
+        const popup = document.querySelector('.popwindowinterdimiate');
+        popup.style.display = "none";
+        
+        // Vymaž inputy
+        nameoftask.value = '';
+        datum.value = '';
+        
+        currentEditingTask = null;
+    });
+}
+
+// todolist.js
+export const todolist = {
+    Projects: [
+        {
+            projectName: "Domácí práce",
+            todos: [
+                {
+                    name: "Uklidit pokoj",
+                    dueDate: "2025-09-05",
+                    completed: false
+                },
+                {
+                    name: "Vyprat prádlo",
+                    dueDate: "2025-09-03",
+                    completed: true
+                }
+            ]
+        },
+        {
+            projectName: "Práce",
+            todos: [
+                {
+                    name: "Dokončit zprávu",
+                    dueDate: "2025-09-01",
+                    completed: false
+                },
+                {
+                    name: "Schůzka s klientem",
+                    dueDate: "2025-09-02",
+                    completed: false
+                }
+            ]
+        }
+    ]
+};
+
+// Pomocné funkce pro práci s daty
+export function saveToLocalStorage() {
+    try {
+        localStorage.setItem('todolist', JSON.stringify(todolist));
+    } catch (error) {
+        console.error('Chyba při ukládání do localStorage:', error);
+    }
+}
+
+export function loadFromLocalStorage() {
+    try {
+        const saved = localStorage.getItem('todolist');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            todolist.Projects = parsed.Projects || [];
+        }
+    } catch (error) {
+        console.error('Chyba při načítání z localStorage:', error);
+    }
+}
+
+// Automaticky načti data při načtení modulu
+loadFromLocalStorage();
