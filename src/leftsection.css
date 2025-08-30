@@ -31,6 +31,9 @@ button{
     height: 1px;
     background-color: white;
 }
+.opentodo{
+    cursor: pointer;
+}
 .project-content{
     margin-top: 50px;
 }
